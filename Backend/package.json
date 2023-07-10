@@ -21,7 +21,7 @@
     "nodemon": "^2.0.22",
     "validator": "^13.7.0"
   },
-  "engins": {
+  "engines": {
     "node": ">=14.20.1"
   }
 }
