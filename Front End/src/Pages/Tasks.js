@@ -113,6 +113,13 @@ const Tasks = () => {
             </Grid>
           ))}
         </Grid>
+        {taskList.length === 0 && (
+          <Grid cintainer alignItems={"center"}>
+            <Box sx={{ marginTop: "50px", textAlign: "center" }}>
+              Create Your First Task
+            </Box>
+          </Grid>
+        )}
       </Container>
       <AddTaskModel
         isAdd={true}

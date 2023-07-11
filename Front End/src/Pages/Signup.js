@@ -56,6 +56,10 @@ const Signup = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (password !== confirmPassword) {
+      toast.error("Paasowrd and confirm password must be same!");
+      return;
+    }
     validateField("name");
     validateField("password");
     validateField("confirmPassword");
@@ -125,7 +129,7 @@ const Signup = () => {
             <Box
               component="form"
               noValidate
-              onSubmit={handleSubmit}
+              // onSubmit={handleSubmit}
               sx={{ mt: 1 }}
             >
               <TextField
