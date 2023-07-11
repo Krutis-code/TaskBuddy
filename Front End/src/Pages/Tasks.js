@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Grid, Typography } from "@mui/material";
 import AddTaskModel from "../components/AddTaskModel";
-import { tasks } from "../DummyData/Tasks";
 import TaskCard from "../components/TaskCard";
 import { deleteTaskById, fetchAllTasks } from "../Services/TaskServices";
 import { toast } from "react-toastify";
 import LogoutModal from "../components/LogoutModal";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Tasks = () => {
   const [addModel, setAddModel] = useState(false);

@@ -3,8 +3,6 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import { Link } from "react-router-dom";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
@@ -21,6 +19,7 @@ import {
 } from "../helpers/utility";
 import { CircularProgress } from "@mui/material";
 import { toast } from "react-toastify";
+import coverImage from "./../assets/coverImage.jpg";
 
 const theme = createTheme();
 
@@ -97,8 +96,8 @@ const Signup = () => {
           sm={4}
           md={7}
           sx={{
-            backgroundImage: "url(https://source.unsplash.com/random)",
             backgroundRepeat: "no-repeat",
+            backgroundImage: `url(${coverImage})`,
             backgroundColor: (t) =>
               t.palette.mode === "light"
                 ? t.palette.grey[50]

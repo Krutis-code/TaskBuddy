@@ -190,8 +190,6 @@ const AddTaskModel = ({
                   value={dueDate}
                   onChange={(newValue) => setDueDate(newValue)}
                   onBlur={(e) => validateField(e.target.name)}
-                  // error={erros?.dueDate?.isValid === false}
-                  // helperText={erros?.dueDate?.message}
                   slotProps={{
                     textField: {
                       helperText: `${
@@ -214,11 +212,6 @@ const AddTaskModel = ({
         <Button
           onClick={() => {
             handleAdd();
-            // validateField("title");
-            // validateField("description");
-            // isModify ? ModifyTask(currentTaskData._id) : handleSubmit()
-            // handleSubmit(currentTaskData?._id);
-            // submitClicked.current = true;
           }}
           color="success"
           variant="contained"

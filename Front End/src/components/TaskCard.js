@@ -10,8 +10,6 @@ import {
 import React, { useState } from "react";
 import { COMPLETED, PENDING } from "../constants/AppConstants";
 import { format } from "date-fns";
-import DeleteIcon from "@mui/icons-material/Delete";
-import TruncatedText from "./TruncatedText";
 import DeleteTaskModal from "./DeleteModal";
 const TaskCard = ({ taskData, setTaskData, deleteTask, loading }) => {
   const [deleteModal, setDeleteModal] = useState("");

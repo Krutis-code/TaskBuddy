@@ -1,27 +1,14 @@
 import {
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  Grid,
-  Radio,
-  RadioGroup,
-  TextField,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers";
-import React, { useEffect, useState } from "react";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { COMPLETED, PENDING } from "../constants/AppConstants";
-import { createTask, updateTask } from "../Services/TaskServices";
+import React from "react";
 
-const LogoutModal = ({ open, handleClose, handleSubmit, getAllTaks }) => {
+const LogoutModal = ({ open, handleClose, handleSubmit }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle id="alert-dialog-title">Logout</DialogTitle>
