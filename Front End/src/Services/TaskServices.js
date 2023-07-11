@@ -10,7 +10,6 @@ const getHeaders = () => {
 };
 
 export const fetchAllTasks = async () => {
-  console.log("fetch all tasks", getHeaders());
   const url = "/api/tasks/";
   return API.get(url, getHeaders());
 };

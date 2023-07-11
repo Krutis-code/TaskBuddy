@@ -12,6 +12,7 @@ import AddTaskModel from "../components/AddTaskModel";
 import { tasks } from "../DummyData/Tasks";
 import TaskCard from "../components/TaskCard";
 import { deleteTaskById, fetchAllTasks } from "../Services/TaskServices";
+import { toast } from "react-toastify";
 
 const Tasks = () => {
   const [addModel, setAddModel] = useState(false);
@@ -19,29 +20,31 @@ const Tasks = () => {
   const [currentTaskData, setCurrentTaskData] = useState({});
   const [taskList, setTaskList] = useState([]);
   const [searchParam, setSaecrchParam] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    console.log("get all tasks");
     getAllTaks();
   }, []);
 
   const deleteTask = async (id) => {
-    console.log("id", id);
+    setLoading(true);
     try {
       const res = await deleteTaskById(id);
       getAllTaks();
-    } catch (error) {}
+      toast.success("Task Deleted Successfully !");
+    } catch (error) {
+      toast.error(error.response.data.error || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
   };
   const setTaskData = (data) => {
-    console.log(data);
     setCurrentTaskData(data);
     setEditModel(true);
-    console.log("set task data");
   };
   const getAllTaks = async () => {
     try {
       const res = await fetchAllTasks();
-      console.log("fetchAllTasks", res);
       setTaskList(res.data);
     } catch (error) {}
   };
@@ -98,6 +101,7 @@ const Tasks = () => {
                 taskData={data}
                 setTaskData={setTaskData}
                 deleteTask={deleteTask}
+                loading={loading}
               ></TaskCard>
             </Grid>
           ))}

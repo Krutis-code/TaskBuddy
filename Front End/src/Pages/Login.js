@@ -15,29 +15,36 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { userLogin } from "../Services/UserServices";
 import { validateEmail, validatePassword } from "../helpers/utility";
-
+import buttonLoader from "../components/ButtonLoader";
+import { CircularProgress } from "@mui/material";
+import { toast } from "react-toastify";
 const theme = createTheme();
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erros, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const validateField = (e) => {
     let obj;
     if (e === "email") {
       obj = validateEmail(email);
-    } else if (e === "password") {
-      obj = validatePassword(password);
+      setErrors((pre) => ({ ...pre, [e]: obj }));
     }
-    setErrors((pre) => ({ ...pre, [e]: obj }));
+    if (e === "password") {
+      obj = validatePassword(password);
+      setErrors((pre) => ({ ...pre, [e]: obj }));
+    }
   };
   const handleSubmit = async (event) => {
-    event.preventDefault();
     validateField("email");
     validateField("password");
+    event.preventDefault();
+    console.log("err", erros);
     if (erros?.email?.isValid && erros?.password?.isValid) {
+      setLoading(true);
       let payload = {
         email: email,
         password: password,
@@ -46,11 +53,15 @@ const Login = () => {
         const res = await userLogin(payload);
         console.log("res", res);
         localStorage.setItem("userAuth", res.data.token);
-        // localStorage.setItem("AuthToken", JSON.stringify(res.data.token));
         localStorage.setItem("emailId", res.data.email);
         navigate("/tasks");
-        // localStorage.setItem("emailId", JSON.stringify(res.data.email));
-      } catch (error) {}
+        toast.success("Login Successful !");
+      } catch (error) {
+        console.log("error", error);
+        toast.error(error.response.data.error || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -137,8 +148,9 @@ const Login = () => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
                 onClick={handleSubmit}
+                disabled={loading}
               >
-                Sign In
+                {loading ? <CircularProgress /> : "Sign In"}
               </Button>
               <Grid container>
                 <Grid item>

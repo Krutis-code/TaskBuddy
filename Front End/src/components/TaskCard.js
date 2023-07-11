@@ -13,14 +13,15 @@ import { format } from "date-fns";
 import DeleteIcon from "@mui/icons-material/Delete";
 import TruncatedText from "./TruncatedText";
 import DeleteTaskModal from "./DeleteModal";
-const TaskCard = ({ taskData, setTaskData, deleteTask }) => {
+const TaskCard = ({ taskData, setTaskData, deleteTask, loading }) => {
   const [deleteModal, setDeleteModal] = useState("");
   const [deleteId, setDeleteId] = useState("");
 
   const { title, description, status, dueDate } = taskData;
 
-  const handleDeleteTask = () => {
-    deleteTask(deleteId);
+  const handleDeleteTask = async () => {
+    await deleteTask(deleteId);
+    setDeleteModal(false);
   };
   return (
     <Paper
@@ -97,7 +98,10 @@ const TaskCard = ({ taskData, setTaskData, deleteTask }) => {
           setDeleteModal(false);
           setDeleteId("");
         }}
-        handleDelete={handleDeleteTask}
+        handleDelete={() => {
+          handleDeleteTask();
+        }}
+        loading={loading}
       ></DeleteTaskModal>
     </Paper>
   );

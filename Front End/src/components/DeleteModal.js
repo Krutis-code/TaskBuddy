@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -20,7 +21,13 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { COMPLETED, PENDING } from "../constants/AppConstants";
 import { createTask, updateTask } from "../Services/TaskServices";
 
-const DeleteTaskModal = ({ open, handleClose, handleDelete, getAllTaks }) => {
+const DeleteTaskModal = ({
+  open,
+  handleClose,
+  handleDelete,
+  getAllTaks,
+  loading,
+}) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle id="alert-dialog-title">Delete Task</DialogTitle>
@@ -33,8 +40,13 @@ const DeleteTaskModal = ({ open, handleClose, handleDelete, getAllTaks }) => {
         <Button onClick={handleClose} color="info" variant="outlined">
           Cancel
         </Button>
-        <Button onClick={handleDelete} color="error" variant="contained">
-          Delete
+        <Button
+          onClick={handleDelete}
+          color="error"
+          variant="contained"
+          disabled={loading}
+        >
+          {loading ? <CircularProgress /> : "Delete"}
         </Button>
       </DialogActions>
     </Dialog>

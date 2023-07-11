@@ -9,7 +9,6 @@ const TruncatedText = ({ text, maxLength }) => {
   };
 
   const truncatedText = truncated ? text?.slice(0, maxLength) + "..." : text;
-  console.log("truncatedText", truncatedText);
   return (
     <Typography variant="body2">
       {truncatedText}

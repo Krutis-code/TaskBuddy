@@ -1,5 +1,6 @@
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -14,7 +15,7 @@ import {
   TextField,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { COMPLETED, PENDING } from "../constants/AppConstants";
@@ -35,7 +36,8 @@ const AddTaskModel = ({
   const [status, setStaus] = useState(PENDING);
   const [dueDate, setDueDate] = useState("");
   const [erros, setErrors] = useState({});
-
+  const [loading, setLoading] = useState(false);
+  const submitClicked = useRef(false);
   useEffect(() => {
     if (isModify == true) {
       setTitle(currentTaskData?.title);
@@ -46,44 +48,62 @@ const AddTaskModel = ({
   }, [open]);
 
   const validateField = (e) => {
-    console.log("e", e);
     let obj;
     if (e === "title") {
       obj = requiredValidation(title, "Title");
-    } else if (e === "description") {
-      obj = requiredValidation(description, "Description");
+      setErrors((pre) => ({ ...pre, [e]: obj }));
     }
-    setErrors((pre) => ({ ...pre, [e]: obj }));
+    if (e === "description") {
+      obj = requiredValidation(description, "Description");
+      setErrors((pre) => ({ ...pre, [e]: obj }));
+    }
+  };
+  const handleAdd = () => {
+    validateField("title");
+    validateField("description");
+    submitClicked.current = true;
   };
 
+  useEffect(() => {
+    if (
+      erros?.title?.isValid &&
+      erros?.description?.isValid &&
+      submitClicked.current === true
+    ) {
+      handleSubmit();
+    }
+  }, [erros]);
+
   const handleSubmit = async (id) => {
+    setLoading(true);
     let payload = {
       title,
       description,
-      status: status === COMPLETED ? false : true,
+      status: status === COMPLETED ? true : false,
       dueDate,
     };
-    validateField("title");
-    validateField("description");
 
-    toast.error("Please fill Due Date");
     if (erros?.title?.isValid && erros?.description?.isValid) {
-      console.log("dueDate", dueDate);
       if (!dueDate) {
+        toast.error("Please fill Due Date");
         return;
       }
       try {
-        const res = isModify
-          ? await updateTask(id, payload)
-          : await createTask(payload);
-        console.log("res", res);
+        const res =
+          isModify === true
+            ? await updateTask(currentTaskData._id, payload)
+            : await createTask(payload);
         setTitle("");
         setDescription("");
         setDueDate("");
         handleClose();
         getAllTaks();
-      } catch (error) {}
-      console.log("payload", payload);
+        toast.success("Task Added Successfully !");
+      } catch (error) {
+        toast.error(error.response.data.error || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -96,7 +116,6 @@ const AddTaskModel = ({
         dueDate,
       };
       let res = await updateTask(id, payload);
-      console.log("res", res);
       handleClose();
       getAllTaks();
     } catch (error) {}
@@ -151,13 +170,13 @@ const AddTaskModel = ({
                 >
                   <FormControlLabel
                     control={<Radio />}
-                    label={COMPLETED}
-                    value={COMPLETED}
+                    label={PENDING}
+                    value={PENDING}
                   />
                   <FormControlLabel
-                    value={PENDING}
+                    value={COMPLETED}
                     control={<Radio />}
-                    label={PENDING}
+                    label={COMPLETED}
                   />
                 </RadioGroup>
               </FormControl>
@@ -193,14 +212,19 @@ const AddTaskModel = ({
           Cancel
         </Button>
         <Button
-          onClick={() =>
+          onClick={() => {
+            handleAdd();
+            // validateField("title");
+            // validateField("description");
             // isModify ? ModifyTask(currentTaskData._id) : handleSubmit()
-            handleSubmit(currentTaskData._id)
-          }
+            // handleSubmit(currentTaskData?._id);
+            // submitClicked.current = true;
+          }}
           color="success"
           variant="contained"
+          disabled={loading}
         >
-          Submit
+          {loading ? <CircularProgress /> : "Submit"}
         </Button>
       </DialogActions>
     </Dialog>

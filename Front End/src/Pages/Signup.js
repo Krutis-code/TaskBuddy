@@ -19,6 +19,8 @@ import {
   validateEmail,
   validatePassword,
 } from "../helpers/utility";
+import { CircularProgress } from "@mui/material";
+import { toast } from "react-toastify";
 
 const theme = createTheme();
 
@@ -27,6 +29,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const [erros, setErrors] = useState({});
 
@@ -36,15 +39,20 @@ const Signup = () => {
     let obj;
     if (e === "name") {
       obj = requiredValidation(name, e);
-    } else if (e === "email") {
-      obj = validateEmail(email);
-    } else if (e === "password") {
-      obj = validatePassword(password);
-      console.log(obj);
-    } else if (e === "confirmPassword") {
-      obj = validatePassword(confirmPassword);
+      setErrors((pre) => ({ ...pre, [e]: obj }));
     }
-    setErrors((pre) => ({ ...pre, [e]: obj }));
+    if (e === "email") {
+      obj = validateEmail(email);
+      setErrors((pre) => ({ ...pre, [e]: obj }));
+    }
+    if (e === "password") {
+      obj = validatePassword(password);
+      setErrors((pre) => ({ ...pre, [e]: obj }));
+    }
+    if (e === "confirmPassword") {
+      obj = validatePassword(confirmPassword);
+      setErrors((pre) => ({ ...pre, [e]: obj }));
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -59,6 +67,7 @@ const Signup = () => {
       erros?.password?.isValid &&
       erros?.confirmPassword?.isValid
     ) {
+      setLoading(true);
       let payload = {
         name,
         email,
@@ -67,11 +76,14 @@ const Signup = () => {
       try {
         const res = await userSignup(payload);
         navigate("/tasks");
-        console.log("res", res);
         localStorage.setItem("userAuth", res.data.token);
-        // localStorage.setItem("AuthToken", JSON.stringify(res.data.token));
         localStorage.setItem("emailId", res.data.email);
-      } catch (error) {}
+        toast.success("Welcome to Task Buddy!!");
+      } catch (error) {
+        toast.error(error.response.data.error || "Something went wrong");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -182,8 +194,9 @@ const Signup = () => {
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
                 onClick={handleSubmit}
+                disabled={loading}
               >
-                Sign In
+                {loading ? <CircularProgress /> : "Sign up"}
               </Button>
               <Grid container>
                 <Grid item>
