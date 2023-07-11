@@ -13,6 +13,8 @@ import { tasks } from "../DummyData/Tasks";
 import TaskCard from "../components/TaskCard";
 import { deleteTaskById, fetchAllTasks } from "../Services/TaskServices";
 import { toast } from "react-toastify";
+import LogoutModal from "../components/LogoutModal";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Tasks = () => {
   const [addModel, setAddModel] = useState(false);
@@ -21,7 +23,9 @@ const Tasks = () => {
   const [taskList, setTaskList] = useState([]);
   const [searchParam, setSaecrchParam] = useState("");
   const [loading, setLoading] = useState(false);
+  const [logout, setLogout] = useState(false);
 
+  const navigate = useNavigate();
   useEffect(() => {
     getAllTaks();
   }, []);
@@ -48,7 +52,12 @@ const Tasks = () => {
       setTaskList(res.data);
     } catch (error) {}
   };
-
+  const LogOut = () => {
+    localStorage.removeItem("emailId");
+    localStorage.removeItem("userAuth");
+    setLogout(false);
+    navigate("/login");
+  };
   return (
     <div>
       <AppBar sx={{ background: "#F5F5F5" }}>
@@ -82,16 +91,22 @@ const Tasks = () => {
                 variant="contained"
                 color="primary"
                 onClick={() => setAddModel(true)}
+                sx={{ marginRight: "20px" }}
               >
                 Add Task
+              </Button>
+              <Button
+                variant="outlined"
+                color="primary"
+                onClick={() => setLogout(true)}
+              >
+                LogOut
               </Button>
             </Box>
           </Grid>
         </Container>
       </AppBar>
-      {/* <Grid container>
-        <Button onClick={() => setAddModel(true)}> Add Task</Button>
-      </Grid> */}
+
       <Container sx={{ marginTop: "90px" }}>
         <Grid container spacing={3}>
           {taskList.map((data) => (
@@ -120,6 +135,13 @@ const Tasks = () => {
         currentTaskData={currentTaskData}
         getAllTaks={getAllTaks}
       />
+      <LogoutModal
+        open={logout}
+        handleClose={() => {
+          setLogout(false);
+        }}
+        handleSubmit={LogOut}
+      ></LogoutModal>
     </div>
   );
 };
