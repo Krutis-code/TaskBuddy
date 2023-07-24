@@ -39,11 +39,17 @@ const AddTaskModel = ({
   const [loading, setLoading] = useState(false);
   const submitClicked = useRef(false);
   useEffect(() => {
-    if (isModify == true) {
+    if (isModify === true) {
       setTitle(currentTaskData?.title);
       setDescription(currentTaskData?.description);
       setStaus(currentTaskData?.status ? COMPLETED : PENDING);
       setDueDate(new Date(currentTaskData?.dueDate));
+    }
+    if (open === false) {
+      setTitle("");
+      setDescription("");
+      setDueDate("");
+      setErrors({});
     }
   }, [open]);
 
@@ -57,8 +63,13 @@ const AddTaskModel = ({
       obj = requiredValidation(description, "Description");
       setErrors((pre) => ({ ...pre, [e]: obj }));
     }
+    if (e === "dueDate") {
+      obj = requiredValidation(dueDate, "Due date");
+      setErrors((pre) => ({ ...pre, [e]: obj }));
+    }
   };
   const handleAdd = () => {
+    validateField("dueDate");
     validateField("title");
     validateField("description");
     submitClicked.current = true;
@@ -66,8 +77,9 @@ const AddTaskModel = ({
 
   useEffect(() => {
     if (
-      erros?.title?.isValid &&
-      erros?.description?.isValid &&
+      title &&
+      description &&
+      dueDate !== "" &&
       submitClicked.current === true
     ) {
       handleSubmit();
@@ -84,10 +96,6 @@ const AddTaskModel = ({
     };
 
     if (erros?.title?.isValid && erros?.description?.isValid) {
-      if (!dueDate) {
-        toast.error("Please fill Due Date");
-        return;
-      }
       try {
         const res =
           isModify === true
@@ -98,7 +106,11 @@ const AddTaskModel = ({
         setDueDate("");
         handleClose();
         getAllTaks();
-        toast.success("Task Added Successfully !");
+        toast.success(
+          isModify === true
+            ? "Task updated sucessfully!"
+            : "Task Added Successfully !"
+        );
       } catch (error) {
         toast.error(error.response.data.error || "Something went wrong");
       } finally {
@@ -184,19 +196,19 @@ const AddTaskModel = ({
             <Grid item pt={3}>
               <LocalizationProvider dateAdapter={AdapterDateFns}>
                 <DatePicker
-                  color="primary"
                   label="Due Date"
                   name="dueDate"
                   value={dueDate}
                   onChange={(newValue) => setDueDate(newValue)}
-                  onBlur={(e) => validateField(e.target.name)}
                   slotProps={{
                     textField: {
                       helperText: `${
-                        erros?.dueDate?.message ? erros?.dueDate?.message : ""
+                        erros?.dueDate?.message && dueDate === ""
+                          ? erros?.dueDate?.message
+                          : ""
                       }`,
-                      error: `${erros?.dueDate?.isValid === false}`,
-                      onBlur: (e) => validateField(e.target.name),
+                      error: erros.dueDate?.isValid === false && dueDate === "",
+                      onBlur: (e) => validateField("dueDate"),
                     },
                   }}
                 />
